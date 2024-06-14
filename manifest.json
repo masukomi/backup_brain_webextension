@@ -1,24 +1,24 @@
 {
     "manifest_version": 2,
-    "name": "Pinboard WebExtension",
-    "short_name": "Pinboard",
-    "version": "1.64",
-    "description": "Easily add links to Pinboard. A remake of the official Pinboard extension.",
-    "author": "George Pop",
-    "homepage_url": "https://github.com/gapop/pinboard-webextension",
+    "name": "Backup Brain WebExtension",
+    "short_name": "Backup Brain",
+    "version": "1.0",
+    "description": "Easily add links to Backup Brain.",
+    "author": "George Pop & Kay Rhodes",
+    "homepage_url": "https://github.com/masukomi/backup_brain_webextension",
     "applications": {
         "gecko": {
-            "id": "pinboard-webextension@helloworld.ro",
+            "id": "backupbrain-webextension@backupbrain.app",
             "strict_min_version": "60.0"
         }
     },
     "icons": {
-        "48": "icons/pinboard_icon_48.png",
-        "96": "icons/pinboard_icon_96.png",
-        "200": "icons/pinboard_icon.png"
+        "48": "icons/backup_brain_icon_48.png",
+        "96": "icons/backup_brain_icon_96.png",
+        "200": "icons/backup_brain_icon.png"
     },
     "permissions": [
-        "*://pinboard.in/*",
+        "*://backupbrain:3334/*",
         "storage",
         "contextMenus",
         "activeTab",
@@ -54,7 +54,7 @@
                 "size": 96
             }
         ],
-        "default_title": "Add to Pinboard",
+        "default_title": "Add to Backup Brain",
         "default_popup": "popup_menu.html",
         "browser_style": true
     },
@@ -64,15 +64,14 @@
     "content_scripts": [
         {
             "matches": [
-                "https://pinboard.in/add",
-                "https://pinboard.in/add*later=yes*"
+                "https://backupbrain:3334/create"
             ],
             "js": ["link_saved.js"]
         }
     ],
     "commands": {
         "save_dialog": {
-            "description": "Save to Pinboard (opens dialog)"
+            "description": "Save to Backup Brain (opens dialog)"
         },
         "read_later": {
             "description": "Save to Read later"

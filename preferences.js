@@ -3,6 +3,7 @@ const Preferences = {
     storage_area: 'local',
 
     defaults: {
+        backup_brain_url: '',
         toolbar_button: 'show_menu',
         show_notifications: true,
         context_menu_items: true,
@@ -21,17 +22,6 @@ const Preferences = {
         let option_value = {}
         option_value[option] = value
         browser.storage[this.storage_area].set(option_value)
-    },
-
-    async migrate_to_local_storage() {
-        let value
-        for (option in this.defaults) {
-            this.storage_area = 'sync'
-            value = await this.get(option)
-            browser.storage.sync.remove(option)
-            this.storage_area = 'local'
-            this.set(option, value)
-        }
     },
 
     async get_keyboard_shortcuts() {

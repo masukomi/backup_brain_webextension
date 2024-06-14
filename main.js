@@ -1,10 +1,17 @@
-const Pinboard = {
+/* Hello fellow Geek.
+As you go through this file you may notice a lot
+of commented out code.
+BackupBrain doesn't currently support these features
+but I hope to in the future.
+*/
+
+const BackupBrain = {
     url: {
-        add_link: 'https://pinboard.in/add?showtags={show_tags}&url={url}&title={title}&description={description}',
-        read_later: 'https://pinboard.in/add?later=yes&noui=yes&jump=close&url={url}&title={title}',
-        save_tabs: 'https://pinboard.in/tabs/save/',
-        show_tabs: 'https://pinboard.in/tabs/show/',
-        login: 'https://pinboard.in/popup_login/'
+        add_link: '{backup_brain_url}/create?showtags={show_tags}&url={url}&title={title}&description={description}',
+        // read_later: '{backup_brain_url}/create?to_read=true&noui=yes&jump=close&url={url}&title={title}',
+        // save_tabs: '{backup_brain_url}/tabs/save/',
+        // show_tabs: '{backup_brain_url}/tabs/show/',
+        login: '{backup_brain_url}/popup_login/'
     },
     
     async get_endpoint(url_handle, bookmark_info) {
@@ -15,6 +22,7 @@ const Pinboard = {
             endpoint = endpoint.replace('{url}', encodeURIComponent(bookmark_info.url || ''))
                 .replace('{title}', encodeURIComponent(bookmark_info.title || ''))
                 .replace('{description}', encodeURIComponent(bookmark_info.description || ''))
+                .replace('{backup_brain_url}', Preferences.backup_brain_url)
         }
         return endpoint
     }
@@ -69,14 +77,14 @@ const App = {
         }
     },
 
-    // Opens a window for interacting with Pinboard
+    // Opens a window for interacting with BackupBrain
     async open_add_link_window(url) {
         const show_tags = await Preferences.get('show_tags')
         const bg_window = await browser.windows.getCurrent()
         const pin_window = await browser.windows.create({
             url: url,
             type: 'popup',
-            width: 750,
+            width: 800,
             height: show_tags ? 550 : 350,
             incognito: bg_window.incognito
         })
@@ -94,9 +102,9 @@ const App = {
         return form_tab
     },
 
-    // Opens the Pinboard "Add Link" form
+    // Opens the BackupBrain "Add Link" form
     async open_save_form(bookmark_info) {
-        const endpoint = await Pinboard.get_endpoint('add_link', bookmark_info)
+        const endpoint = await BackupBrain.get_endpoint('add_link', bookmark_info)
         const add_link_form_in_tab = await Preferences.get('add_link_form_in_tab')
         if (add_link_form_in_tab) {
             const tab = await this.open_add_link_tab(endpoint)
@@ -116,8 +124,9 @@ const App = {
     },
     
     // Saves the bookmark to read later
+    /*
     async save_for_later(bookmark_info) {
-        const endpoint = await Pinboard.get_endpoint('read_later', bookmark_info)
+        const endpoint = await BackupBrain.get_endpoint('read_later', bookmark_info)
         const bg_window = await browser.windows.getCurrent()
         if (bg_window.incognito) {
     
@@ -129,7 +138,7 @@ const App = {
         } else {
     
             const http_response = await fetch(endpoint, {credentials: 'include'})
-            if (http_response.redirected && http_response.url.startsWith(await Pinboard.get_endpoint('login'))) {
+            if (http_response.redirected && http_response.url.startsWith(await BackupBrain.get_endpoint('login'))) {
                 this.open_save_form(http_response.url)
             } else if (http_response.status !== 200 || http_response.ok !== true) {
                 this.show_notification('FAILED TO ADD LINK. ARE YOU LOGGED-IN?', true)
@@ -139,7 +148,8 @@ const App = {
     
         }
     },
-    
+    */
+    /*
     async save_tab_set() {
         const bg_window = browser.windows.getCurrent()
         if (bg_window.incognito) {
@@ -163,22 +173,23 @@ const App = {
     
         let payload = new FormData()
         payload.append('data', JSON.stringify({browser: 'ffox', windows: windows}))
-        const http_response = await fetch(await Pinboard.get_endpoint('save_tabs'), {method: 'POST', body: payload, credentials: 'include'})
+        const http_response = await fetch(await BackupBrain.get_endpoint('save_tabs'), {method: 'POST', body: payload, credentials: 'include'})
         if (http_response.status !== 200 || http_response.ok !== true) {
             this.show_notification('FAILED TO SAVE TAB SET.', true)
         } else {
-            browser.tabs.create({url: await Pinboard.get_endpoint('show_tabs')})
+            browser.tabs.create({url: await BackupBrain.get_endpoint('show_tabs')})
         }
     },
+    */
 
     async show_notification(message, force) {
         const show_notifications = await Preferences.get('show_notifications')
         if (force || show_notifications) {
             browser.notifications.create({
                 'type': 'basic',
-                'title': 'Pinboard',
+                'title': 'BackupBrain',
                 'message': message,
-                'iconUrl': 'icons/pinboard_icon_48.png'
+                'iconUrl': 'icons/backup_brain_icon_48.png'
             })
         }
     },
@@ -190,19 +201,19 @@ const App = {
     
                 case 'show_menu':
                     browser.browserAction.setPopup({popup: 'popup_menu.html'})
-                    browser.browserAction.setTitle({title: 'Add to Pinboard'})
+                    browser.browserAction.setTitle({title: 'Add to BackupBrain'})
                     break
     
                 case 'save_dialog':
                     browser.browserAction.setPopup({popup: ''})
-                    browser.browserAction.setTitle({title: 'Add to Pinboard'})
+                    browser.browserAction.setTitle({title: 'Add to BackupBrain'})
                     break
-    
+                /*
                 case 'read_later':
                     browser.browserAction.setPopup({popup: ''})
-                    browser.browserAction.setTitle({title: 'Add to Pinboard (read later)'})
+                    browser.browserAction.setTitle({title: 'Add to BackupBrain (read later)'})
                     break
-    
+                */
             }
             this.toolbar_button_state = pref
         }
@@ -216,6 +227,7 @@ const App = {
                 title: 'Save...',
                 contexts: ['link', 'page', 'selection']
             })
+            /*
             browser.contextMenus.create({
                 id: 'read_later',
                 title: 'Read later',
@@ -226,6 +238,7 @@ const App = {
                 title: 'Save tab set...',
                 contexts: ['page', 'selection']
             })
+            */
         } else {
             browser.contextMenus.removeAll()
         }
@@ -239,6 +252,7 @@ const App = {
                 this.open_save_form(bookmark_info)
                 break
     
+            /*
             case 'read_later':
                 bookmark_info = await this.get_bookmark_info_from_current_tab()
                 this.save_for_later(bookmark_info)
@@ -247,10 +261,11 @@ const App = {
             case 'save_tab_set':
                 this.save_tab_set()
                 break
-    
+            */
+
             case 'link_saved':
                 this.close_save_form()
-                this.show_notification('Link added to Pinboard')
+                this.show_notification('Link added to BackupBrain')
                 break
         }
     },
@@ -262,7 +277,8 @@ const App = {
                 bookmark_info = await this.get_bookmark_info_from_context_menu_target(info, tab)
                 this.open_save_form(bookmark_info)
                 break
-    
+
+            /*
             case 'read_later':
                 bookmark_info = await this.get_bookmark_info_from_context_menu_target(info, tab)
                 this.save_for_later(bookmark_info)
@@ -271,6 +287,7 @@ const App = {
             case 'save_tab_set':
                 this.save_tab_set()
                 break
+            */
         }
     },
 
@@ -289,13 +306,17 @@ const App = {
         }
     },
 
-    async handle_upgrade(details) {
-        // Migrate user preferences from sync to local storage
-        if (details.reason === 'update' && parseFloat(details.previousVersion) < 1.4) {
-            await Preferences.migrate_to_local_storage()
-            await this.update_toolbar_button()
-            await this.update_context_menu()
+    async handleInstalled(details) {
+        /* note: details.reason is one of: 'install', 'update', 'browser_update',  'shared_module_update'
+         * ⚠ On Chrome "browser_update" is "chrome_update"
+         * Docs here: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/OnInstalledReason
+         */
+        if (Preferences.backup_brain_url === undefined || Preferences.backup_brain_url == '') {
+            // browser.tabs.create({url: 'post_install.html'})
+            this.show_notification('I need to know where your Backup Brain server is. Please configure me.', true)
+            await browser.runtime.openOptionsPage()
         }
+
     }
 }
 
@@ -321,7 +342,7 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
 browser.storage.onChanged.addListener((changes, area) => {App.handle_preferences_changes(changes, area)})
 
 // Version update listener
-browser.runtime.onInstalled.addListener(details => {App.handle_upgrade(details)})
+browser.runtime.onInstalled.addListener(details => {App.handleInstalled(details)})
 
 // Apply preferences when loading extension
 App.update_toolbar_button()

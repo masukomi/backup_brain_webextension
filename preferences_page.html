@@ -9,6 +9,10 @@
 </style>
 </head>
 <body>
+    <div class="panel-formElements-item browser-style">
+        <input id="backup_brain_url" type="input" placeholder="http://127.0.0.1:3334" >
+        <label for="backup_brain_url">The address of Your Backup Brain.</label>
+    </div>
     <div class="panel-formElements-item">
         <label for="toolbar_button">Toolbar button...</label>
         <select id="toolbar_button" class="browser-style">
@@ -33,10 +37,14 @@
         <label for="context_menu_items">Add context menu items</label>
     </div>
 
+
+    <input id="show_tags" type="checkbox" style="display:none;">
+    <!-- eventually we'll re-enable this. I hope.
     <div class="panel-formElements-item browser-style">
         <input id="show_tags" type="checkbox">
         <label for="show_tags">Show all tags when saving links</label>
     </div>
+    -->
 
     <div class="panel-formElements-item">
         <fieldset>
