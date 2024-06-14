@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', async () => {
+            // browser.notifications.create({
+            //     'type': 'basic',
+            //     'title': 'BackupBrain',
+            //     'message': `url: ${await Preferences.get('backup_brain_url')}`,
+            //     'iconUrl': 'icons/backup_brain_icon_48.png'
+            // })
+
     // Match popup to theme colors
     const theme = await browser.theme.getCurrent()
     if (theme && theme.colors) {

@@ -5,8 +5,20 @@ const bind_functions = {
         set: (input, value) => {input.value = value}
     },
     INPUT: {
-        get: (input) => !!input.checked,
-        set: (input, value) => {input.checked = !!value}
+        get: (input) => {
+            if (input.type === 'checkbox') {
+                return !!input.checked
+            } else {
+                return input.value
+            }
+        },
+        set: (input, value) => {
+            if (input.type === 'checkbox') {
+                input.checked = !!value
+            } else {
+                input.value = value
+            }
+        }
     }
 }
 
@@ -19,7 +31,12 @@ async function bind_preference(option) {
 
     // Create an event listener for saving the preference value
     input.addEventListener('change', async event => {
-        Preferences.set(option, bind_fn.get(event.target))
+        target = event.target
+        value = target.value
+        if (value == 'on'){
+            value = target.checked
+        }
+        Preferences.set(option, value)
     })
 }
 

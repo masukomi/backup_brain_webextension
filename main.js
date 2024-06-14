@@ -7,7 +7,7 @@ but I hope to in the future.
 
 const BackupBrain = {
     url: {
-        add_link: '{backup_brain_url}/create?showtags={show_tags}&url={url}&title={title}&description={description}',
+        add_link: '{backup_brain_url}/bookmarks/new?showtags={show_tags}&url={url}&title={title}&description={description}',
         // read_later: '{backup_brain_url}/create?to_read=true&noui=yes&jump=close&url={url}&title={title}',
         // save_tabs: '{backup_brain_url}/tabs/save/',
         // show_tabs: '{backup_brain_url}/tabs/show/',
@@ -22,7 +22,7 @@ const BackupBrain = {
             endpoint = endpoint.replace('{url}', encodeURIComponent(bookmark_info.url || ''))
                 .replace('{title}', encodeURIComponent(bookmark_info.title || ''))
                 .replace('{description}', encodeURIComponent(bookmark_info.description || ''))
-                .replace('{backup_brain_url}', Preferences.backup_brain_url)
+                .replace('{backup_brain_url}', await Preferences.get('backup_brain_url'))
         }
         return endpoint
     }
@@ -311,7 +311,8 @@ const App = {
          * ⚠ On Chrome "browser_update" is "chrome_update"
          * Docs here: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/OnInstalledReason
          */
-        if (Preferences.backup_brain_url === undefined || Preferences.backup_brain_url == '') {
+        const bbu = await Preferences.get('backup_brain_url')
+        if (bbu === undefined || bbu == '') {
             // browser.tabs.create({url: 'post_install.html'})
             this.show_notification('I need to know where your Backup Brain server is. Please configure me.', true)
             await browser.runtime.openOptionsPage()
