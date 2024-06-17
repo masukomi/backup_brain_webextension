@@ -7,7 +7,7 @@ but I hope to in the future.
 
 const BackupBrain = {
     url: {
-        add_link: '{backup_brain_url}/bookmarks/new?showtags={show_tags}&url={url}&title={title}&description={description}',
+        add_link: '{backup_brain_url}/bookmarks/new?showtags={show_tags}&url={url}&title={title}&description={description}&closeable=true&layout=webextension',
         // read_later: '{backup_brain_url}/create?to_read=true&noui=yes&jump=close&url={url}&title={title}',
         // save_tabs: '{backup_brain_url}/tabs/save/',
         // show_tabs: '{backup_brain_url}/tabs/show/',
@@ -243,7 +243,15 @@ const App = {
             browser.contextMenus.removeAll()
         }
     },
-    
+    // async check_page_loaded() {
+    //         if (document.location.toString().match(/\/bookmarks\/success\?closeable=true/)) {
+    //             this.show_notification('page_loaded message MATCH url')
+    //             console.log('XXX page_loaded message MATCH url')
+    //         } else {
+    //             console.log('XXX page_loaded message NO MATCH url')
+    //         }
+    // }
+
     async handle_message(message) {
         let bookmark_info
         switch (message) {
@@ -266,6 +274,10 @@ const App = {
             case 'link_saved':
                 this.close_save_form()
                 this.show_notification('Link added to BackupBrain')
+                break
+
+            case 'page_loaded':
+                this.check_page_loaded()
                 break
         }
     },
@@ -330,6 +342,8 @@ browser.runtime.onMessage.addListener(message => {
 browser.browserAction.onClicked.addListener(() => {
     App.handle_message(App.toolbar_button_state)
 })
+// checking if we're on a success page
+// browser.webNavigation.onCompleted.addListener(command =>  {App.handle_message('page_loaded')})
 
 // Keyboard shortcut event handler
 browser.commands.onCommand.addListener(command => {App.handle_message(command)})
