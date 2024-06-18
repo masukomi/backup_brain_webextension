@@ -18,7 +18,7 @@
         "200": "icons/backup_brain_icon.png"
     },
     "permissions": [
-        "*://backupbrain:3334/*",
+        "*://*/*",
         "storage",
         "contextMenus",
         "activeTab",
@@ -64,9 +64,10 @@
     "content_scripts": [
         {
             "matches": [
-                "https://backupbrain:3334/create"
+                "*://*/bookmarks/*",
+                "*://*/users/sign_in*"
             ],
-            "js": ["link_saved.js"]
+            "js": ["page_observer.js"]
         }
     ],
     "commands": {

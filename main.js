@@ -243,16 +243,15 @@ const App = {
             browser.contextMenus.removeAll()
         }
     },
-    // async check_page_loaded() {
-    //         if (document.location.toString().match(/\/bookmarks\/success\?closeable=true/)) {
-    //             this.show_notification('page_loaded message MATCH url')
-    //             console.log('XXX page_loaded message MATCH url')
-    //         } else {
-    //             console.log('XXX page_loaded message NO MATCH url')
-    //         }
-    // }
 
-    async handle_message(message) {
+    async check_page_loaded(url) {
+        if (url.match(/\/bookmarks\/success\?closeable=true/)) {
+            this.show_notification('bookmark saved!')
+            this.close_save_form()
+        }
+    },
+
+    async handle_message(message, url) {
         let bookmark_info
         switch (message) {
             case 'save_dialog':
@@ -271,13 +270,8 @@ const App = {
                 break
             */
 
-            case 'link_saved':
-                this.close_save_form()
-                this.show_notification('Link added to BackupBrain')
-                break
-
             case 'page_loaded':
-                this.check_page_loaded()
+                this.check_page_loaded(url)
                 break
         }
     },
@@ -335,7 +329,7 @@ const App = {
 
 // Attach message event handler
 browser.runtime.onMessage.addListener(message => {
-    App.handle_message(message.event)
+    App.handle_message(message.event, message.url)
 })
 
 // Toolbar button event handler
@@ -343,7 +337,14 @@ browser.browserAction.onClicked.addListener(() => {
     App.handle_message(App.toolbar_button_state)
 })
 // checking if we're on a success page
+// browser.webNavigation Is not supported
 // browser.webNavigation.onCompleted.addListener(command =>  {App.handle_message('page_loaded')})
+
+const callback = function(mutationsList, observer) {
+    console.log("mutateddd", ...arguments);
+};
+const observer = new MutationObserver(callback);
+observer.observe(targetNode, config);
 
 // Keyboard shortcut event handler
 browser.commands.onCommand.addListener(command => {App.handle_message(command)})
@@ -362,3 +363,4 @@ browser.runtime.onInstalled.addListener(details => {App.handleInstalled(details)
 // Apply preferences when loading extension
 App.update_toolbar_button()
 App.update_context_menu()
+
