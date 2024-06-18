@@ -2,7 +2,7 @@ const Preferences = {
 
 
     defaults: {
-        backup_brain_url: 'http://127.0.0.1:3334',
+        backup_brain_url: null,
         toolbar_button: 'show_menu',
         show_notifications: true,
         context_menu_items: true,
@@ -14,7 +14,7 @@ const Preferences = {
         // see the following for Storage Area APIs
         //  https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea
         let stored_value = await browser.storage.local.get(option)
-        if (stored_value[option] === undefined || stored_value[option] == '') {
+        if (stored_value[option] === undefined || stored_value[option] == '' || stored_value[option] == null) {
             stored_value[option] = this.defaults[option]
         }
 
@@ -23,6 +23,9 @@ const Preferences = {
 
     async set(option, value) {
         let option_value = {}
+        if (option == "backup_brain_url" && value.match(/\/$/)) {
+            value = value.replace(/\/$/, '')
+        }
         option_value[option] = value
         browser.storage.local.set(option_value)
     },

@@ -13,7 +13,7 @@ const BackupBrain = {
         // show_tabs: '{backup_brain_url}/tabs/show/',
         login: '{backup_brain_url}/popup_login/'
     },
-    
+
     async get_endpoint(url_handle, bookmark_info) {
         const url_template = this.url[url_handle]
         const show_tags = await Preferences.get('show_tags') ? 'yes' : 'no'
@@ -56,7 +56,7 @@ const App = {
     async get_bookmark_info_from_context_menu_target(info, tab) {
         let url
         let title = ''
-    
+
         if (info.linkUrl) {
             url = info.linkUrl
             if (info.linkText) {
@@ -122,21 +122,21 @@ const App = {
     async close_save_form() {
         throw 'No close function defined.'
     },
-    
+
     // Saves the bookmark to read later
     /*
     async save_for_later(bookmark_info) {
         const endpoint = await BackupBrain.get_endpoint('read_later', bookmark_info)
         const bg_window = await browser.windows.getCurrent()
         if (bg_window.incognito) {
-    
+
             // In private mode we actually have to open a window,
             // because Firefox doesn't support split incognito mode
             // and gets confused about cookie jars.
             this.open_save_form(endpoint)
-    
+
         } else {
-    
+
             const http_response = await fetch(endpoint, {credentials: 'include'})
             if (http_response.redirected && http_response.url.startsWith(await BackupBrain.get_endpoint('login'))) {
                 this.open_save_form(http_response.url)
@@ -145,7 +145,7 @@ const App = {
             } else {
                 this.show_notification('Saved to read later.')
             }
-    
+
         }
     },
     */
@@ -156,7 +156,7 @@ const App = {
             this.show_notification("Due to a Firefox limitation, saving tab sets does not work in Private mode. Try normal mode!", true)
             return
         }
-    
+
         const window_info = await browser.windows.getAll({populate: true, windowTypes: ['normal']})
         let windows = []
         for (let i = 0; i < window_info.length; i++) {
@@ -170,7 +170,7 @@ const App = {
             }
             windows.push(tabs)
         }
-    
+
         let payload = new FormData()
         payload.append('data', JSON.stringify({browser: 'ffox', windows: windows}))
         const http_response = await fetch(await BackupBrain.get_endpoint('save_tabs'), {method: 'POST', body: payload, credentials: 'include'})
@@ -198,12 +198,12 @@ const App = {
         const pref = await Preferences.get('toolbar_button')
         if (pref != this.toolbar_button_state) {
             switch (pref) {
-    
+
                 case 'show_menu':
                     browser.browserAction.setPopup({popup: 'popup_menu.html'})
                     browser.browserAction.setTitle({title: 'Add to BackupBrain'})
                     break
-    
+
                 case 'save_dialog':
                     browser.browserAction.setPopup({popup: ''})
                     browser.browserAction.setTitle({title: 'Add to BackupBrain'})
@@ -218,7 +218,7 @@ const App = {
             this.toolbar_button_state = pref
         }
     },
-    
+
     async update_context_menu() {
         const add_context_menu_items = await Preferences.get('context_menu_items')
         if (add_context_menu_items) {
@@ -247,7 +247,7 @@ const App = {
     async check_page_loaded(url) {
         if (url.match(/\/bookmarks\/success\?closeable=true/)) {
             this.show_notification('bookmark saved!')
-            this.close_save_form()
+            setTimeout(this.close_save_form(), 0.5)
         }
     },
 
@@ -258,13 +258,13 @@ const App = {
                 bookmark_info = await this.get_bookmark_info_from_current_tab()
                 this.open_save_form(bookmark_info)
                 break
-    
+
             /*
             case 'read_later':
                 bookmark_info = await this.get_bookmark_info_from_current_tab()
                 this.save_for_later(bookmark_info)
                 break
-    
+
             case 'save_tab_set':
                 this.save_tab_set()
                 break
@@ -289,7 +289,7 @@ const App = {
                 bookmark_info = await this.get_bookmark_info_from_context_menu_target(info, tab)
                 this.save_for_later(bookmark_info)
                 break
-    
+
             case 'save_tab_set':
                 this.save_tab_set()
                 break
@@ -336,15 +336,6 @@ browser.runtime.onMessage.addListener(message => {
 browser.browserAction.onClicked.addListener(() => {
     App.handle_message(App.toolbar_button_state)
 })
-// checking if we're on a success page
-// browser.webNavigation Is not supported
-// browser.webNavigation.onCompleted.addListener(command =>  {App.handle_message('page_loaded')})
-
-const callback = function(mutationsList, observer) {
-    console.log("mutateddd", ...arguments);
-};
-const observer = new MutationObserver(callback);
-observer.observe(targetNode, config);
 
 // Keyboard shortcut event handler
 browser.commands.onCommand.addListener(command => {App.handle_message(command)})
