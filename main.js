@@ -201,19 +201,34 @@ const App = {
         }
     },
 
+    async showMenu(){
+        let readyToGo = await handleInstalled()
+        if (readyToGo) {
+            browser.browserAction.setPopup({popup: 'popup_menu.html'})
+            browser.browserAction.setTitle({title: 'Add to Backup Brain'})
+        }
+    },
+    async saveDialog(){
+        let readyToGo = await handleInstalled()
+        if (readyToGo) {
+            browser.browserAction.setPopup({popup: ''})
+            browser.browserAction.setTitle({title: 'Add to BackupBrain'})
+        }
+
+    },
+
+
     async update_toolbar_button() {
         const pref = await Preferences.get('toolbar_button')
         if (pref != this.toolbar_button_state) {
             switch (pref) {
 
                 case 'show_menu':
-                    browser.browserAction.setPopup({popup: 'popup_menu.html'})
-                    browser.browserAction.setTitle({title: 'Add to BackupBrain'})
+                    showMenu()
                     break
 
                 case 'save_dialog':
-                    browser.browserAction.setPopup({popup: ''})
-                    browser.browserAction.setTitle({title: 'Add to BackupBrain'})
+                    saveDialog()
                     break
                 /*
                 case 'read_later':
@@ -267,10 +282,14 @@ const App = {
                 break
 
             case 'unread':
-                console.log("XXX unread clicked")
                 const unread_link = await BackupBrain.get_endpoint('unread_link')
                 this.open_dynamic_url_in_tab(unread_link)
                 break
+
+            case 'has_url':
+                this.handleInstalled()
+                break
+
             /*
             case 'read_later':
                 bookmark_info = await this.get_bookmark_info_from_current_tab()
@@ -330,12 +349,13 @@ const App = {
          * Docs here: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/OnInstalledReason
          */
         const bbu = await Preferences.get('backup_brain_url')
-        if (bbu === undefined || bbu == '') {
+        if (bbu === undefined || bbu == '' || bbu == null) {
             // browser.tabs.create({url: 'post_install.html'})
             this.show_notification('I need to know where your Backup Brain server is. Please configure me.', true)
             await browser.runtime.openOptionsPage()
+            return false
         }
-
+        return true
     }
 }
 

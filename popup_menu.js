@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
 
+    await browser.runtime.sendMessage({event: 'has_url'})
     // Match popup to theme colors
     const theme = await browser.theme.getCurrent()
     if (theme && theme.colors) {
