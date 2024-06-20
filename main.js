@@ -8,6 +8,8 @@ but I hope to in the future.
 const BackupBrain = {
     url: {
         add_link: '{backup_brain_url}/bookmarks/new?showtags={show_tags}&url={url}&title={title}&description={description}&closeable=true&layout=webextension',
+        unread_link: '{backup_brain_url}/bookmarks/to_read',
+
         // read_later: '{backup_brain_url}/create?to_read=true&noui=yes&jump=close&url={url}&title={title}',
         // save_tabs: '{backup_brain_url}/tabs/save/',
         // show_tabs: '{backup_brain_url}/tabs/show/',
@@ -22,9 +24,10 @@ const BackupBrain = {
             endpoint = endpoint.replace('{url}', encodeURIComponent(bookmark_info.url || ''))
                 .replace('{title}', encodeURIComponent(bookmark_info.title || ''))
                 .replace('{description}', encodeURIComponent(bookmark_info.description || ''))
-                .replace('{backup_brain_url}', await Preferences.get('backup_brain_url'))
+
         }
         return endpoint
+            .replace('{backup_brain_url}', await Preferences.get('backup_brain_url'))
     }
 }
 
@@ -93,13 +96,17 @@ const App = {
 
     // Open the Add Link form in a new tab
     async open_add_link_tab(url) {
+        open_dynamic_url_in_tab(url)
+    },
+
+    async open_dynamic_url_in_tab(url) {
         const active_tabs = await browser.tabs.query({currentWindow: true, active: true})
         const opener_tab = active_tabs[0]
-        const form_tab = await browser.tabs.create({
+        const new_tab = await browser.tabs.create({
             url: url,
             openerTabId: opener_tab.id
         })
-        return form_tab
+        return new_tab
     },
 
     // Opens the BackupBrain "Add Link" form
@@ -259,6 +266,11 @@ const App = {
                 this.open_save_form(bookmark_info)
                 break
 
+            case 'unread':
+                console.log("XXX unread clicked")
+                const unread_link = await BackupBrain.get_endpoint('unread_link')
+                this.open_dynamic_url_in_tab(unread_link)
+                break
             /*
             case 'read_later':
                 bookmark_info = await this.get_bookmark_info_from_current_tab()
