@@ -4,7 +4,7 @@ of commented out code.
 BackupBrain doesn't currently support these features
 but I hope to in the future.
 */
-
+import {Preferences} from './preferences.js'
 const BackupBrain = {
     url: {
         add_link: '{backup_brain_url}/bookmarks/new?showtags={show_tags}&url={url}&title={title}&description={description}&closeable=true&layout=webextension',

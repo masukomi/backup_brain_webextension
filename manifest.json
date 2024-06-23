@@ -52,7 +52,8 @@
         "default_popup": "popup_menu.html"
     },
     "background": {
-        "scripts": ["preferences.js", "main.js"]
+        "service_worker": "main.js",
+        "type": "module"
     },
     "content_scripts": [
         {
