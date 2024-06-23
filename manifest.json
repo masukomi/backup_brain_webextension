@@ -6,12 +6,6 @@
     "description": "Easily add links to Backup Brain.",
     "author": "George Pop & Kay Rhodes",
     "homepage_url": "https://github.com/masukomi/backup_brain_webextension",
-    "browser_specific_settings": {
-        "gecko": {
-            "id": "backupbrain-webextension@backupbrain.app",
-            "strict_min_version": "79.0"
-        }
-    },
     "icons": {
         "48": "icons/backup_brain_icon_48.png",
         "96": "icons/backup_brain_icon_96.png",
