@@ -1,5 +1,5 @@
 {
-    "manifest_version": 2,
+    "manifest_version": 3,
     "name": "Backup Brain WebExtension",
     "short_name": "Backup Brain",
     "version": "1.0",
@@ -11,7 +11,7 @@
         "96": "icons/backup_brain_icon_96.png",
         "200": "icons/backup_brain_icon.png"
     },
-    "permissions": [
+    "host_permissions": [
         "*://*/*",
         "storage",
         "contextMenus",
@@ -19,7 +19,7 @@
         "notifications",
         "tabs"
     ],
-    "browser_action": {
+    "action": {
         "default_icon": {
             "16": "icons/toolbar_icon_16.png",
             "32": "icons/toolbar_icon_32.png",
@@ -49,8 +49,7 @@
             }
         ],
         "default_title": "Add to Backup Brain",
-        "default_popup": "popup_menu.html",
-        "browser_style": true
+        "default_popup": "popup_menu.html"
     },
     "background": {
         "scripts": ["preferences.js", "main.js"]
@@ -76,7 +75,6 @@
         }
     },
     "options_ui": {
-        "page": "preferences_page.html",
-        "browser_style": true
+        "page": "preferences_page.html"
     }
 }

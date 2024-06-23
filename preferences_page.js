@@ -65,7 +65,7 @@ async function init() {
     })
 
     // Match preferences form to theme colors
-    const theme = await browser.theme.getCurrent()
+    const theme = await chrome.theme.getCurrent()
     if (theme && theme.colors) {
         document.body.style.backgroundColor = theme.colors.ntp_background
         document.body.style.color = theme.colors.ntp_text

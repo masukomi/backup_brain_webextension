@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', async () => {
 
-    await browser.runtime.sendMessage({event: 'has_url'})
+    await chrome.runtime.sendMessage({event: 'has_url'})
     // Match popup to theme colors
-    const theme = await browser.theme.getCurrent()
+    const theme = await chrome.theme.getCurrent()
     if (theme && theme.colors) {
         document.body.style.backgroundColor = theme.colors.popup
         document.body.style.color = theme.colors.popup_text
@@ -16,13 +16,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     for (let i = 0; i < menu_elements.length; i++) {
         let element = menu_elements[i]
         element.addEventListener('click', async () => {
-            await browser.runtime.sendMessage({event: element.id})
+            await chrome.runtime.sendMessage({event: element.id})
             window.close()
         })
     }
 
     document.getElementById('menu-preferences').addEventListener('click', () => {
-        browser.runtime.openOptionsPage()
+        chrome.runtime.openOptionsPage()
         window.close()
     })
 
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             event.target.blur()
         })
         links[i].parentElement.addEventListener('click', () => {
-            browser.tabs.create({url: links[i].href})
+            chrome.tabs.create({url: links[i].href})
             window.close()
         })
     }

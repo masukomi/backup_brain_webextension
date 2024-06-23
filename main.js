@@ -49,13 +49,13 @@ const App = {
     },
 
     async get_bookmark_info_from_current_tab() {
-        const tabs = await browser.tabs.query({currentWindow: true, active: true})
+        const tabs = await chrome.tabs.query({currentWindow: true, active: true})
         const info = {
             url: await this.strip_reader_mode_url(tabs[0].url),
             title: tabs[0].title
         }
         try {
-            info.description = await browser.tabs.executeScript({code: 'getSelection().toString()'})
+            info.description = await chrome.tabs.executeScript({code: 'getSelection().toString()'})
         } catch (error) {
             info.description = ''
         }
@@ -100,8 +100,8 @@ const App = {
     // Opens a window for interacting with BackupBrain
     async open_add_link_window(url) {
         const show_tags = await Preferences.get('show_tags')
-        const bg_window = await browser.windows.getCurrent()
-        const pin_window = await browser.windows.create({
+        const bg_window = await chrome.windows.getCurrent()
+        const pin_window = await chrome.windows.create({
             url: url,
             type: 'popup',
             width: 800,
@@ -117,9 +117,9 @@ const App = {
     },
 
     async open_dynamic_url_in_tab(url) {
-        const active_tabs = await browser.tabs.query({currentWindow: true, active: true})
+        const active_tabs = await chrome.tabs.query({currentWindow: true, active: true})
         const opener_tab = active_tabs[0]
-        const new_tab = await browser.tabs.create({
+        const new_tab = await chrome.tabs.create({
             url: url,
             openerTabId: opener_tab.id
         })
@@ -133,12 +133,12 @@ const App = {
         if (add_link_form_in_tab) {
             const tab = await this.open_add_link_tab(endpoint)
             this.close_save_form = async () => {
-                await browser.tabs.remove(tab.id)
+                await chrome.tabs.remove(tab.id)
             }
         } else {
             const win = await this.open_add_link_window(endpoint)
             this.close_save_form = async () => {
-                await browser.windows.remove(win.id)
+                await chrome.windows.remove(win.id)
             }
         }
     },
@@ -151,7 +151,7 @@ const App = {
     /*
     async save_for_later(bookmark_info) {
         const endpoint = await BackupBrain.get_endpoint('read_later', bookmark_info)
-        const bg_window = await browser.windows.getCurrent()
+        const bg_window = await chrome.windows.getCurrent()
         if (bg_window.incognito) {
 
             // In private mode we actually have to open a window,
@@ -175,13 +175,13 @@ const App = {
     */
     /*
     async save_tab_set() {
-        const bg_window = browser.windows.getCurrent()
+        const bg_window = chrome.windows.getCurrent()
         if (bg_window.incognito) {
             this.show_notification("Due to a Firefox limitation, saving tab sets does not work in Private mode. Try normal mode!", true)
             return
         }
 
-        const window_info = await browser.windows.getAll({populate: true, windowTypes: ['normal']})
+        const window_info = await chrome.windows.getAll({populate: true, windowTypes: ['normal']})
         let windows = []
         for (let i = 0; i < window_info.length; i++) {
             const current_window_tabs = window_info[i].tabs
@@ -201,7 +201,7 @@ const App = {
         if (http_response.status !== 200 || http_response.ok !== true) {
             this.show_notification('FAILED TO SAVE TAB SET.', true)
         } else {
-            browser.tabs.create({url: await BackupBrain.get_endpoint('show_tabs')})
+            chrome.tabs.create({url: await BackupBrain.get_endpoint('show_tabs')})
         }
     },
     */
@@ -209,7 +209,7 @@ const App = {
     async show_notification(message, force) {
         const show_notifications = await Preferences.get('show_notifications')
         if (force || show_notifications) {
-            browser.notifications.create({
+            chrome.notifications.create({
                 'type': 'basic',
                 'title': 'BackupBrain',
                 'message': message,
@@ -221,15 +221,15 @@ const App = {
     async showMenu(){
         let readyToGo = await handleInstalled()
         if (readyToGo) {
-            browser.browserAction.setPopup({popup: 'popup_menu.html'})
-            browser.browserAction.setTitle({title: 'Add to Backup Brain'})
+            chrome.browserAction.setPopup({popup: 'popup_menu.html'})
+            chrome.browserAction.setTitle({title: 'Add to Backup Brain'})
         }
     },
     async saveDialog(){
         let readyToGo = await handleInstalled()
         if (readyToGo) {
-            browser.browserAction.setPopup({popup: ''})
-            browser.browserAction.setTitle({title: 'Add to BackupBrain'})
+            chrome.browserAction.setPopup({popup: ''})
+            chrome.browserAction.setTitle({title: 'Add to BackupBrain'})
         }
 
     },
@@ -249,8 +249,8 @@ const App = {
                     break
                 /*
                 case 'read_later':
-                    browser.browserAction.setPopup({popup: ''})
-                    browser.browserAction.setTitle({title: 'Add to BackupBrain (read later)'})
+                    chrome.browserAction.setPopup({popup: ''})
+                    chrome.browserAction.setTitle({title: 'Add to BackupBrain (read later)'})
                     break
                 */
             }
@@ -261,25 +261,25 @@ const App = {
     async update_context_menu() {
         const add_context_menu_items = await Preferences.get('context_menu_items')
         if (add_context_menu_items) {
-            browser.contextMenus.create({
+            chrome.contextMenus.create({
                 id: 'save_dialog',
                 title: 'Save...',
                 contexts: ['link', 'page', 'selection']
             })
             /*
-            browser.contextMenus.create({
+            chrome.contextMenus.create({
                 id: 'read_later',
                 title: 'Read later',
                 contexts: ['link', 'page', 'selection']
             })
-            browser.contextMenus.create({
+            chrome.contextMenus.create({
                 id: 'save_tab_set',
                 title: 'Save tab set...',
                 contexts: ['page', 'selection']
             })
             */
         } else {
-            browser.contextMenus.removeAll()
+            chrome.contextMenus.removeAll()
         }
     },
 
@@ -369,9 +369,9 @@ const App = {
          */
         const bbu = await Preferences.get('backup_brain_url')
         if (bbu === undefined || bbu == '' || bbu == null) {
-            // browser.tabs.create({url: 'post_install.html'})
+            // chrome.tabs.create({url: 'post_install.html'})
             this.show_notification('I need to know where your Backup Brain server is. Please configure me.', true)
-            await browser.runtime.openOptionsPage()
+            await chrome.runtime.openOptionsPage()
             return false
         }
         return true
@@ -379,28 +379,28 @@ const App = {
 }
 
 // Attach message event handler
-browser.runtime.onMessage.addListener(message => {
+chrome.runtime.onMessage.addListener(message => {
     App.handle_message(message.event, message.url)
 })
 
 // Toolbar button event handler
-browser.browserAction.onClicked.addListener(() => {
+chrome.browserAction.onClicked.addListener(() => {
     App.handle_message(App.toolbar_button_state)
 })
 
 // Keyboard shortcut event handler
-browser.commands.onCommand.addListener(command => {App.handle_message(command)})
+chrome.commands.onCommand.addListener(command => {App.handle_message(command)})
 
 // Context menu event handler
-browser.contextMenus.onClicked.addListener(async (info, tab) => {
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     App.handle_context_menu(info, tab)
 })
 
 // Preferences event handler
-browser.storage.onChanged.addListener((changes, area) => {App.handle_preferences_changes(changes, area)})
+chrome.storage.onChanged.addListener((changes, area) => {App.handle_preferences_changes(changes, area)})
 
 // Version update listener
-browser.runtime.onInstalled.addListener(details => {App.handleInstalled(details)})
+chrome.runtime.onInstalled.addListener(details => {App.handleInstalled(details)})
 
 // Apply preferences when loading extension
 App.update_toolbar_button()

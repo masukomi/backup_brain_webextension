@@ -13,7 +13,7 @@ const Preferences = {
     async get(option) {
         // see the following for Storage Area APIs
         //  https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea
-        let stored_value = await browser.storage.local.get(option)
+        let stored_value = await chrome.storage.local.get(option)
         if (stored_value[option] === undefined || stored_value[option] == '' || stored_value[option] == null) {
             stored_value[option] = this.defaults[option]
         }
@@ -27,16 +27,16 @@ const Preferences = {
             value = value.replace(/\/$/, '')
         }
         option_value[option] = value
-        browser.storage.local.set(option_value)
+        chrome.storage.local.set(option_value)
     },
 
     async get_keyboard_shortcuts() {
-        const shortcuts = await browser.commands.getAll()
+        const shortcuts = await chrome.commands.getAll()
         return shortcuts.filter(shortcut => shortcut.shortcut)
     },
 
     async remove_keyboard_shortcut(name) {
-        browser.commands.reset(name)
+        chrome.commands.reset(name)
     }
 
 };
