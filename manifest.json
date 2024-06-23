@@ -11,13 +11,15 @@
         "96": "icons/backup_brain_icon_96.png",
         "200": "icons/backup_brain_icon.png"
     },
-    "host_permissions": [
-        "*://*/*",
+    "permissions": [
         "storage",
         "contextMenus",
         "activeTab",
         "notifications",
         "tabs"
+    ],
+    "host_permissions": [
+        "*://*/*"
     ],
     "action": {
         "default_icon": {

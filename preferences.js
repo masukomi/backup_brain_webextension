@@ -1,4 +1,4 @@
-const Preferences = {
+export const Preferences = {
 
 
     defaults: {
