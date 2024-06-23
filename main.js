@@ -17,17 +17,23 @@ const BackupBrain = {
     },
 
     async get_endpoint(url_handle, bookmark_info) {
-        const url_template = this.url[url_handle]
-        const show_tags = await Preferences.get('show_tags') ? 'yes' : 'no'
-        let endpoint = url_template.replace('{show_tags}', show_tags)
-        if (bookmark_info) {
-            endpoint = endpoint.replace('{url}', encodeURIComponent(bookmark_info.url || ''))
-                .replace('{title}', encodeURIComponent(bookmark_info.title || ''))
-                .replace('{description}', encodeURIComponent(bookmark_info.description || ''))
+        const backup_brain_url = await Preferences.get('backup_brain_url');
+        if (backup_brain_url === undefined || backup_brain_url == '' || backup_brain_url == null) {
+            return "https://backupbrain.app/configure_your_extension/"
 
+        } else {
+            const url_template = this.url[url_handle]
+            const show_tags = await Preferences.get('show_tags') ? 'yes' : 'no'
+            let endpoint = url_template.replace('{show_tags}', show_tags)
+            if (bookmark_info) {
+                endpoint = endpoint.replace('{url}', encodeURIComponent(bookmark_info.url || ''))
+                    .replace('{title}', encodeURIComponent(bookmark_info.title || ''))
+                    .replace('{description}', encodeURIComponent(bookmark_info.description || ''))
+
+            }
+            return endpoint
+                .replace('{backup_brain_url}', backup_brain_url)
         }
-        return endpoint
-            .replace('{backup_brain_url}', await Preferences.get('backup_brain_url'))
     }
 }
 
@@ -78,6 +84,17 @@ const App = {
             title: title,
             description: info.selectionText || ''
         }
+    },
+
+    async calculate_and_open_root() {
+
+        const backup_brain_url = await Preferences.get('backup_brain_url');
+        if (backup_brain_url === undefined || backup_brain_url == '' || backup_brain_url == null) {
+            this.open_dynamic_url_in_tab("https://BackupBrain.app")
+        } else {
+            this.open_dynamic_url_in_tab(backup_brain_url)
+        }
+
     },
 
     // Opens a window for interacting with BackupBrain
@@ -269,7 +286,7 @@ const App = {
     async check_page_loaded(url) {
         if (url.match(/\/bookmarks\/success\?closeable=true/)) {
             this.show_notification('bookmark saved!')
-            setTimeout(this.close_save_form(), 0.5)
+            setTimeout(this.close_save_form(), 1)
         }
     },
 
@@ -285,7 +302,9 @@ const App = {
                 const unread_link = await BackupBrain.get_endpoint('unread_link')
                 this.open_dynamic_url_in_tab(unread_link)
                 break
-
+            case 'root_link':
+                this.calculate_and_open_root()
+                break
             case 'has_url':
                 this.handleInstalled()
                 break
