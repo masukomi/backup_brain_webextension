@@ -5,8 +5,21 @@ async function restorePrefs(){
     let storage = await chrome.storage.sync.get('backup_brain_url')
     let bb_url = storage.backup_brain_url
     if (bb_url) {
+        if (bb_url.match(/\/$/)) {
+            bb_url = bb_url.replace(/\/$/, '')
+        }
         document.getElementById('backup_brain_url').value = bb_url;
     }
+    storage = await chrome.storage.sync.get('show_notifications')
+    let sn = storage.show_notifications
+    if (sn === undefined || sn === null) {
+        sn = true;
+    }
+
+    document.getElementById('show_notifications').checked = sn;
+
+
+
 }
 async function savePrefs(){
     let new_bb_url=document.getElementById('backup_brain_url').value;
