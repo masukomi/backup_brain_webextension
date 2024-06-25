@@ -10,6 +10,10 @@
     .panel-list-item a {
         cursor: default;
     }
+    body {
+        min-width: 11rem;
+        min-height: 5rem;
+    }
 </style>
 </head>
 <body>
@@ -19,22 +23,13 @@
             <div class="text-section-header"><div id="root_link" class="message-on-click" style="font-weight: bold;">Backup Brain</div></div>
         </div>
         <div class="panel-section panel-section-list">
-            <div id="save_dialog" class="message-on-click panel-list-item text">Save to Backup Brain...</div>
-            <!--
-              <div id="read_later" class="message-on-click panel-list-item text">Read later</div>
-              <div id="save_tab_set" class="message-on-click panel-list-item text">Save tab set</div>
-              <div class="panel-section-separator"></div>
-            -->
+            <div id="save_dialog" class="message-on-click panel-list-item text">Save to Backup Brain…</div>
             <div id="unread" class="message-on-click panel-list-item text">Unread bookmarks</div>
-            <!--
-            <div class="panel-list-item text"><a href="https://BackupBrain.app/tabs/">Tab sets</a></div>
-            <div class="panel-section-separator"></div>
-            -->
             <div id="menu-preferences" class="panel-list-item text">Preferences</div>
         </div>
     </div>
 
-    <script src="preferences.js"></script>
+    <!-- <script type="module" src="preferences.js"></script> -->
     <script src="popup_menu.js"></script>
 </body>
 </html>

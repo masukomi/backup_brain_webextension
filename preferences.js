@@ -3,6 +3,9 @@ export const Preferences = {
 
     defaults: {
         backup_brain_url: null,
+        // all of the rest of these were
+        // stripped out of the UI but will,
+        // hopefully be added back in.
         toolbar_button: 'show_menu',
         show_notifications: true,
         context_menu_items: true,
@@ -13,8 +16,8 @@ export const Preferences = {
     async get(option) {
         // see the following for Storage Area APIs
         //  https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea
-        let stored_value = await chrome.storage.local.get(option)
-        if (stored_value[option] === undefined || stored_value[option] == '' || stored_value[option] == null) {
+        let stored_value = await chrome.storage.sync.get(option)
+        if (! stored_value[option]) {
             stored_value[option] = this.defaults[option]
         }
 
@@ -40,3 +43,4 @@ export const Preferences = {
     }
 
 };
+

@@ -2,15 +2,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     await chrome.runtime.sendMessage({event: 'has_url'})
     // Match popup to theme colors
-    const theme = await chrome.theme.getCurrent()
-    if (theme && theme.colors) {
-        document.body.style.backgroundColor = theme.colors.popup
-        document.body.style.color = theme.colors.popup_text
-        const stylesheet = document.styleSheets[0]
-        stylesheet.insertRule(`.panel-list-item:not(.disabled):hover { background-color: ${theme.colors.popup_highlight}; border-block: 1px solid ${theme.colors.popup_border} }`)
-        stylesheet.insertRule(`.panel-list-item:not(.disabled):hover:active { background-color: ${theme.colors.popup_highlight} }`)
-        stylesheet.insertRule(`.panel-section-separator { background-color: ${theme.colors.popup_border} }`)
-    }    
+    // const theme = await chrome.theme.getCurrent()
+    // if (theme && theme.colors) {
+    //     document.body.style.backgroundColor = theme.colors.popup
+    //     document.body.style.color = theme.colors.popup_text
+    //     const stylesheet = document.styleSheets[0]
+    //     stylesheet.insertRule(`.panel-list-item:not(.disabled):hover { background-color: ${theme.colors.popup_highlight}; border-block: 1px solid ${theme.colors.popup_border} }`)
+    //     stylesheet.insertRule(`.panel-list-item:not(.disabled):hover:active { background-color: ${theme.colors.popup_highlight} }`)
+    //     stylesheet.insertRule(`.panel-section-separator { background-color: ${theme.colors.popup_border} }`)
+    // }
 
     const menu_elements = document.getElementsByClassName('message-on-click')
     for (let i = 0; i < menu_elements.length; i++) {

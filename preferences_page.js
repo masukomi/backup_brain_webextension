@@ -1,78 +1,35 @@
-// Form getter & setter functions by element type
-const bind_functions = {
-    SELECT: {
-        get: (input) => input.value,
-        set: (input, value) => {input.value = value}
-    },
-    INPUT: {
-        get: (input) => {
-            if (input.type === 'checkbox') {
-                return !!input.checked
-            } else {
-                return input.value
-            }
-        },
-        set: (input, value) => {
-            if (input.type === 'checkbox') {
-                input.checked = !!value
-            } else {
-                input.value = value
-            }
-        }
+//import {Preferences} from './preferences.js'
+
+async function restorePrefs(){
+    // const bb_url = await Preferences.get('backup_brain_url')
+    let storage = await chrome.storage.sync.get('backup_brain_url')
+    let bb_url = storage.backup_brain_url
+    if (bb_url) {
+        document.getElementById('backup_brain_url').value = bb_url;
     }
 }
+async function savePrefs(){
+    let new_bb_url=document.getElementById('backup_brain_url').value;
+    let new_values = {}
+    if (new_bb_url) {
+        new_values['backu_brain_url'] = new_bb_url
+    } else {
+        document.getElementById('feedback').innerHTML="<span style='color: red'>Please enter the url of your Backup Brain</span>"
 
-async function bind_preference(option) {
-    const input = document.getElementById(option)
-    const bind_fn = bind_functions[input.tagName]
-
-    // Set the form input value to current value for the preference
-    bind_fn.set(input, await Preferences.get(option))
-
-    // Create an event listener for saving the preference value
-    input.addEventListener('change', async event => {
-        target = event.target
-        value = target.value
-        if (value == 'on'){
-            value = target.checked
-        }
-        Preferences.set(option, value)
-    })
-}
-
-async function init() {
-    for (let option in Preferences.defaults) {
-        bind_preference(option)
     }
 
-    // Add remove links for keyboard shortcuts
-    const shortcuts = await Preferences.get_keyboard_shortcuts()
-    const container = document.getElementById('kb-shortcuts')
-    const tpl = document.getElementById('kb-shortcut-tpl')
-    shortcuts.forEach(shortcut => {
-        const new_shortcut = tpl.cloneNode(true)
-        new_shortcut.id = null
-        new_shortcut.childNodes[0].textContent = shortcut.description + ': '
-        new_shortcut.childNodes[1].textContent = shortcut.shortcut
-        const link = new_shortcut.getElementsByTagName('a')[0]
-        link.addEventListener('click', async event => {
-            event.preventDefault()
-            Preferences.remove_keyboard_shortcut(shortcut.name)
-            link.parentNode.remove()
-        })
-        new_shortcut.style.display = 'block'
-        container.appendChild(new_shortcut)
-    })
+    let show_notifications=document.getElementById('show_notifications').checked;
+    new_values['show_notifications'] = show_notifications;
 
-    // Match preferences form to theme colors
-    const theme = await chrome.theme.getCurrent()
-    if (theme && theme.colors) {
-        document.body.style.backgroundColor = theme.colors.ntp_background
-        document.body.style.color = theme.colors.ntp_text
-        const stylesheet = document.styleSheets[0]
-        stylesheet.insertRule(`a { color: ${theme.colors.ntp_text} }`)
-    }    
+    await chrome.storage.sync.set(new_values);
+
+    if (new_bb_url){
+        document.getElementById('feedback').innerHTML="<span style='color: green'>Updated</span>"
+    }
+
 }
 
-// Bind all preferences
-document.addEventListener('DOMContentLoaded', init)
+
+document.addEventListener('DOMContentLoaded', restorePrefs);
+document.getElementById('save')?.addEventListener('click',
+  savePrefs);

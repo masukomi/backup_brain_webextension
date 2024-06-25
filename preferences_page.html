@@ -13,51 +13,18 @@
         <input id="backup_brain_url" type="text" placeholder="http://127.0.0.1:3334" >
         <label for="backup_brain_url">The address of Your Backup Brain.</label>
     </div>
-    <div class="panel-formElements-item">
-        <label for="toolbar_button">Toolbar button...</label>
-        <select id="toolbar_button" class="browser-style">
-            <option value="show_menu">shows menu</option>
-            <option value="save_dialog">shows <i>Add link</i> dialog</option>
-            <option value="read_later">directly saves link as <i>Read later</i></option>
-        </select>
-    </div>
-
-    <div class="panel-formElements-item browser-style">
-        <input id="add_link_form_in_tab" type="checkbox">
-        <label for="add_link_form_in_tab">Open <i>Add Link</i> form in new tab instead of popup window</label>
-    </div>
-
     <div class="panel-formElements-item browser-style">
         <input id="show_notifications" type="checkbox">
         <label for="show_notifications">Show notifications when saving links</label>
     </div>
 
     <div class="panel-formElements-item browser-style">
-        <input id="context_menu_items" type="checkbox">
-        <label for="context_menu_items">Add context menu items</label>
+        <button id="save">Save</button>
+        <span id="feedback" style="display: inline-block;">&nbsp;</span>
     </div>
 
-
-    <input id="show_tags" type="checkbox" style="display:none;">
-    <!-- eventually we'll re-enable this. I hope.
-    <div class="panel-formElements-item browser-style">
-        <input id="show_tags" type="checkbox">
-        <label for="show_tags">Show all tags when saving links</label>
-    </div>
-    -->
-
-    <div class="panel-formElements-item">
-        <fieldset>
-            <legend>Keyboard shortcuts</legend>
-            <p>To set up shortcuts, go to <i>Manage Extension Shortcuts</i> in the cogwheel menu at the top.</p>
-            <ul id="kb-shortcuts">
-                <li id="kb-shortcut-tpl" style="display: none">{description}: <b>{shortcut}</b> [<a href="#">remove</a>]</li>
-            </ul>
-        </fieldset>
-    </div>
-
-    <script src="preferences.js"></script>
-    <script src="preferences_page.js"></script>
+    <!-- <script type="module" src="preferences.js"></script> -->
+    <script type="module" src="preferences_page.js"></script>
 </body>
 </html>
 
