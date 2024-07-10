@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "Backup Brain WebExtension",
     "short_name": "Backup Brain",
-    "version": "1.0",
+    "version": "1.0.1",
     "description": "Easily add links to Backup Brain.",
     "author": "George Pop & Kay Rhodes",
     "homepage_url": "https://github.com/masukomi/backup_brain_webextension",
