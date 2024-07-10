@@ -286,7 +286,7 @@ const App = {
     async check_page_loaded(url) {
         if (url.match(/\/bookmarks\/success\?closeable=true/)) {
             this.show_notification('bookmark saved!')
-            setTimeout(this.close_save_form(), 1)
+            setTimeout(this.close_save_form(), 100) // milliseconds
         }
     },
 
