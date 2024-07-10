@@ -2,12 +2,14 @@
 
 echo "Version number (ex 1.0): "
 read version
+version=$(echo $version | sed -e "s/v//i")
 
 filename="backup_brain_firefox_v$version.xpi"
 
 echo "Where should I put the zip?
 Defaults to ../"
 read location
+
 
 if [ "$location" == "" ]; then
 	echo "using default location"
@@ -16,6 +18,10 @@ fi
 if [[ $location != *"/" ]]; then
 	location=$location"/"
 fi
+echo "updating version number in manifest.json"
+cat manifest.json | sed -e "s/\"version\": \".*\"/\"version\": \"$version\"/" > manifest_new.json
+mv manifest_new.json manifest.json
+
 echo "zipping…"
 echo "----------------------------"
 zip -r -FS "$location$filename" ./* \
@@ -24,4 +30,5 @@ zip -r -FS "$location$filename" ./* \
 	--exclude "tools/*"
 echo "----------------------------"
 echo "DONE. New file is at $location$filename"
-
+echo "SHA256 hash for update manifest is:"
+sha256sum "$location$filename" | awk '{print $1}'
