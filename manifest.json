@@ -78,5 +78,10 @@
     "options_ui": {
         "page": "preferences_page.html",
         "browser_style": true
+    },
+    "browser_specific_settings": {
+        "gecko": {
+            "update_url": "https://backupbrain.app/firefox_updates.json"
+        }
     }
 }

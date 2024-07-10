@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-echo "Version number (ex 1.0): "
-read version
-zip -r -FS ../backup_brain_firefox_v$version.zip ./* --exclude "*.git*" --exclude "icons/.DS_Store"
