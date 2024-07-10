@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+echo "Version number (ex 1.0): "
+read version
+
+filename="backup_brain_firefox_v$version.zip"
+
+echo "Where should I put the zip?
+Defaults to ../"
+read location
+
+if [ "$location" == "" ]; then
+	echo "using default location"
+	location="../"
+fi
+if [[ $location != *"/" ]]; then
+	location=$location"/"
+fi
+echo "zipping…"
+echo "----------------------------"
+zip -r -FS $location"$filename" ./* \
+	--exclude "*.git*" \
+	--exclude "icons/.DS_Store" \
+	--exclude "tools/*"
