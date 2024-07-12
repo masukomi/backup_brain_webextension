@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+
+version=$(cat manifest.json | grep "\"version\"" | sed -e "s/\"version\": \"//" | sed -e "s/\",//" -e "s/ //g")
+
+echo "Version number (default: $version): "
+read new_version
+new_version=$(echo $version | sed -e "s/v//i")
+if [ "$new_version" != "" ]; then
+	version=$new_version
+fi
+
+filename="backup_brain_chrome_v$version.zip"
+
+echo "Where should I put the zip?
+Defaults to ../"
+read location
+
+
+if [ "$location" == "" ]; then
+	echo "using default location"
+	location="../"
+fi
+if [[ $location != *"/" ]]; then
+	location=$location"/"
+fi
+echo "updating version number in manifest.json"
+cat manifest.json | sed -e "s/\"version\": \".*\"/\"version\": \"$version\"/" > manifest_new.json
+mv manifest_new.json manifest.json
+
+echo "zipping…"
+echo "----------------------------"
+zip -r -FS "$location$filename" ./* \
+	--exclude "*.git*" \
+	--exclude "icons/.DS_Store" \
+	--exclude "tools/*"
+echo "----------------------------"
+echo "DONE. New file is at $location$filename"
+echo "SHA256 hash for update manifest is:"
+sha256sum "$location$filename" | awk '{print $1}'
