@@ -17,15 +17,12 @@ async function restorePrefs(){
     }
 
     document.getElementById('show_notifications').checked = sn;
-
-
-
 }
 async function savePrefs(){
     let new_bb_url=document.getElementById('backup_brain_url').value;
     let new_values = {}
     if (new_bb_url) {
-        new_values['backu_brain_url'] = new_bb_url
+        new_values['backup_brain_url'] = new_bb_url
     } else {
         document.getElementById('feedback').innerHTML="<span style='color: red'>Please enter the url of your Backup Brain</span>"
 

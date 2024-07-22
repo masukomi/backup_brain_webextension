@@ -60,10 +60,9 @@
     "content_scripts": [
         {
             "matches": [
-                "*://*/bookmarks/*",
-                "*://*/users/sign_in*"
+                "<all_urls>"
             ],
-            "js": ["page_observer.js"],
+            "js": ["bb_get_selection.js"],
             "all_frames": false,
             "run_at": "document_idle"
         }

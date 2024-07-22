@@ -10,6 +10,7 @@ const BackupBrain = {
         add_link: '{backup_brain_url}/bookmarks/new?showtags={show_tags}&url={url}&title={title}&description={description}&closeable=true&layout=webextension',
         unread_link: '{backup_brain_url}/bookmarks/to_read',
 
+
         // read_later: '{backup_brain_url}/create?to_read=true&noui=yes&jump=close&url={url}&title={title}',
         // save_tabs: '{backup_brain_url}/tabs/save/',
         // show_tabs: '{backup_brain_url}/tabs/show/',
@@ -20,7 +21,7 @@ const BackupBrain = {
 
         const backup_brain_url = await Preferences.get('backup_brain_url')
         if (! backup_brain_url) {
-            return "https://backupbrain.app/configure_your_extension/"
+            return "https://backupbrain.app/configure_your_extension"
 
         } else {
             const url_template = this.url[url_handle]
@@ -42,23 +43,41 @@ const App = {
     toolbar_button_state: Preferences.defaults.toolbar_button,
 
     // Returns the original URL for a page opened in Firefox's reader mode
-    async strip_reader_mode_url(url) {
+    async stripReaderModeUrl(url) {
         if (url.indexOf('about:reader?url=') == 0) {
             url = decodeURIComponent(url.substr(17))
         }
         return url
     },
 
-    async get_bookmark_info_from_current_tab() {
-        const tabs = await chrome.tabs.query({currentWindow: true, active: true})
-        const info = {
-            url: await this.strip_reader_mode_url(tabs[0].url),
-            title: tabs[0].title
+    async getCurrentTab() {
+        let queryOptions = { active: true, lastFocusedWindow: true };
+        let [tab] = await chrome.tabs.query(queryOptions);
+        return tab;
+    },
+
+    async getDescription(tab_id) {
+        // const data = await chrome.runtime.sendMessage({event: 'bb_get_description'}, response => {})
+        //const data = await chrome.runtime.sendMessage({event: 'bb_get_description'})
+
+        const response = await chrome.tabs.sendMessage(
+            tab_id, {method: 'bbGetDescription'}
+        );
+        let description = response.data
+        if (description === undefined || description == null) {
+            description = ""
         }
-        try {
-            info.description = await chrome.tabs.executeScript({code: 'getSelection().toString()'})
-        } catch (error) {
-            info.description = ''
+        return description
+    },
+
+    async getBookmarkInfoFromCurrentTab() {
+        // const tabs = await chrome.tabs.query({currentWindow: true, active: true})
+        const current_tab = await this.getCurrentTab()
+        const description = await this.getDescription(current_tab.id)
+        const info = {
+            url: await this.stripReaderModeUrl(current_tab.url),
+            title: current_tab.title,
+            description: description
         }
         return info
     },
@@ -81,7 +100,7 @@ const App = {
         }
 
         return {
-            url: await this.strip_reader_mode_url(url),
+            url: await this.stripReaderModeUrl(url),
             title: title,
             description: info.selectionText || ''
         }
@@ -99,16 +118,18 @@ const App = {
     },
 
     // Opens a window for interacting with BackupBrain
-    async open_add_link_window(url) {
+    async openAddLinkWindow(url) {
         const bg_window = await chrome.windows.getCurrent()
-        const pin_window = await chrome.windows.create({
+        // someday we'll show tags. Someday…
+        const show_tags = await Preferences.get('show_tags')
+        const add_bookmark_form = await chrome.windows.create({
             url: url,
             type: 'popup',
             width: 1600,
             height: show_tags ? 550 : 350,
             incognito: bg_window.incognito
         })
-        return pin_window
+        return add_bookmark_form
     },
 
     // Open the Add Link form in a new tab
@@ -127,7 +148,7 @@ const App = {
     },
 
     // Opens the BackupBrain "Add Link" form
-    async open_save_form(bookmark_info) {
+    async openSaveForm(bookmark_info) {
         const endpoint = await BackupBrain.get_endpoint('add_link', bookmark_info)
         const add_link_form_in_tab = await Preferences.get('add_link_form_in_tab')
         if (add_link_form_in_tab) {
@@ -136,7 +157,8 @@ const App = {
                 await chrome.tabs.remove(tab.id)
             }
         } else {
-            const win = await this.open_add_link_window(endpoint)
+
+            const win = await this.openAddLinkWindow(endpoint)
             this.close_save_form = async () => {
                 await chrome.windows.remove(win.id)
             }
@@ -236,8 +258,8 @@ const App = {
         let bookmark_info
         switch (message) {
             case 'save_dialog':
-                bookmark_info = await this.get_bookmark_info_from_current_tab()
-                this.open_save_form(bookmark_info)
+                bookmark_info = await this.getBookmarkInfoFromCurrentTab()
+                this.openSaveForm(bookmark_info)
                 break
 
             case 'unread':
@@ -253,7 +275,7 @@ const App = {
 
             /*
             case 'read_later':
-                bookmark_info = await this.get_bookmark_info_from_current_tab()
+                bookmark_info = await this.getBookmarkInfoFromCurrentTab()
                 this.save_for_later(bookmark_info)
                 break
 
@@ -273,7 +295,7 @@ const App = {
         switch (info.menuItemId) {
             case 'save_dialog':
                 bookmark_info = await this.get_bookmark_info_from_context_menu_target(info, tab)
-                this.open_save_form(bookmark_info)
+                this.openSaveForm(bookmark_info)
                 break
 
             /*
