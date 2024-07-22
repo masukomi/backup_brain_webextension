@@ -9,11 +9,6 @@ const BackupBrain = {
     url: {
         add_link: '{backup_brain_url}/bookmarks/new?showtags={show_tags}&url={url}&title={title}&description={description}&closeable=true&layout=webextension',
         unread_link: '{backup_brain_url}/bookmarks/to_read',
-
-
-        // read_later: '{backup_brain_url}/create?to_read=true&noui=yes&jump=close&url={url}&title={title}',
-        // save_tabs: '{backup_brain_url}/tabs/save/',
-        // show_tabs: '{backup_brain_url}/tabs/show/',
         login: '{backup_brain_url}/popup_login/'
     },
 
@@ -157,10 +152,14 @@ const App = {
                 await chrome.tabs.remove(tab.id)
             }
         } else {
-
-            const win = await this.openAddLinkWindow(endpoint)
-            this.close_save_form = async () => {
-                await chrome.windows.remove(win.id)
+            try {
+                const win = await this.openAddLinkWindow(endpoint)
+                this.close_save_form = async () => {
+                    await chrome.windows.remove(win.id)
+                }
+            } catch (error) {
+                // if we had trouble closing it it must be closed.
+                // console.log(error);
             }
         }
     },
@@ -222,32 +221,7 @@ const App = {
         }
     },
 
-    async update_context_menu() {
-        const add_context_menu_items = await Preferences.get('context_menu_items')
-        if (add_context_menu_items) {
-            chrome.contextMenus.create({
-                id: 'save_dialog',
-                title: 'Save...',
-                contexts: ['link', 'page', 'selection']
-            })
-            /*
-            chrome.contextMenus.create({
-                id: 'read_later',
-                title: 'Read later',
-                contexts: ['link', 'page', 'selection']
-            })
-            chrome.contextMenus.create({
-                id: 'save_tab_set',
-                title: 'Save tab set...',
-                contexts: ['page', 'selection']
-            })
-            */
-        } else {
-            chrome.contextMenus.removeAll()
-        }
-    },
-
-    async check_page_loaded(url) {
+    async checkPageLoaded(url) {
         if (url.match(/\/bookmarks\/success\?closeable=true/)) {
             this.show_notification('bookmark saved!')
             setTimeout(this.close_save_form, 4)
@@ -272,20 +246,8 @@ const App = {
             case 'has_url':
                 this.handleInstalled()
                 break
-
-            /*
-            case 'read_later':
-                bookmark_info = await this.getBookmarkInfoFromCurrentTab()
-                this.save_for_later(bookmark_info)
-                break
-
-            case 'save_tab_set':
-                this.save_tab_set()
-                break
-            */
-
-            case 'page_loaded':
-                this.check_page_loaded(url)
+            case 'bb_page_loaded':
+                this.checkPageLoaded(url)
                 break
         }
     },
@@ -297,17 +259,6 @@ const App = {
                 bookmark_info = await this.get_bookmark_info_from_context_menu_target(info, tab)
                 this.openSaveForm(bookmark_info)
                 break
-
-            /*
-            case 'read_later':
-                bookmark_info = await this.get_bookmark_info_from_context_menu_target(info, tab)
-                this.save_for_later(bookmark_info)
-                break
-
-            case 'save_tab_set':
-                this.save_tab_set()
-                break
-            */
         }
     },
 
@@ -353,14 +304,6 @@ chrome.action.onClicked.addListener(() => {
     App.handle_message(App.toolbar_button_state)
 })
 
-// Keyboard shortcut event handler
-chrome.commands.onCommand.addListener(command => {App.handle_message(command)})
-
-// Context menu event handler
-chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-    App.handle_context_menu(info, tab)
-})
-
 // Preferences event handler
 chrome.storage.onChanged.addListener((changes, area) => {App.handle_preferences_changes(changes, area)})
 
@@ -369,5 +312,3 @@ chrome.runtime.onInstalled.addListener(details => {App.handleInstalled(details)}
 
 // Apply preferences when loading extension
 App.update_toolbar_button()
-App.update_context_menu()
-

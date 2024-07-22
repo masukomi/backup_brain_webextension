@@ -1,9 +1,9 @@
 {
     "manifest_version": 3,
-    "name": "Backup Brain WebExtension",
+    "name": "Backup Brain",
     "short_name": "Backup Brain",
-    "version": "1.0",
-    "description": "Easily add links to Backup Brain.",
+    "version": "1.0.0",
+    "description": "Easily add links to your Backup Brain.",
     "author": "George Pop & Kay Rhodes",
     "homepage_url": "https://github.com/masukomi/backup_brain_webextension",
     "icons": {
@@ -13,10 +13,9 @@
     },
     "permissions": [
         "storage",
-        "contextMenus",
         "activeTab",
-        "notifications",
-        "tabs"
+        "tabs",
+        "notifications"
     ],
     "host_permissions": [
         "*://*/*"
@@ -62,7 +61,7 @@
             "matches": [
                 "<all_urls>"
             ],
-            "js": ["bb_get_selection.js"],
+            "js": ["bb_get_selection.js", "bb_page_observer.js"],
             "all_frames": false,
             "run_at": "document_idle"
         }
