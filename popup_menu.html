@@ -14,13 +14,29 @@
         min-width: 11rem;
         min-height: 5rem;
     }
+
+    .panel-section-header {
+        white-space: nowrap;
+        font-weight: bold;
+        margin-bottom: 0.25rem;
+        position: relative;
+        top: -0.5rem;
+    }
+    #icon{
+        position: relative;
+        top: 0.5rem;
+    }
+    #menu-preferences,
+    .message-on-click {
+        cursor: pointer;
+    }
 </style>
 </head>
 <body>
     <div class="panel">
-        <div class="panel-section panel-section-header">
-            <div class="icon-section-header"><a href="https://BackupBrain.app/"><img src="icons/backup_brain_icon.png" width="32" height="32"></a></div>
-            <div class="text-section-header"><div id="root_link" class="message-on-click" style="font-weight: bold;">Backup Brain</div></div>
+        <div id="root_link" class="message-on-click panel-section panel-section-header">
+            <img id="icon" src="icons/backup_brain_icon.png" width="32" height="32">
+            Backup Brain
         </div>
         <div class="panel-section panel-section-list">
             <div id="save_dialog" class="message-on-click panel-list-item text">Save to Backup Brain…</div>

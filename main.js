@@ -125,7 +125,7 @@ const App = {
         const add_bookmark_form = await chrome.windows.create({
             url: url,
             type: 'popup',
-            width: 1600,
+            width: 1500,
             height: show_tags ? 550 : 350,
             incognito: bg_window.incognito
         })
