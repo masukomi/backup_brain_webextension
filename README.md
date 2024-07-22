@@ -1,26 +1,9 @@
-# Backup Brain WebExtension
+# Backup Brain Browser Extensions
 
-This is a Firefox & Chrome extension for easily adding links to [Backup Brain](https://backupbrain.app). 
+This repository contains the Chrome & Firefox extensions for the [Backup Brain](https://BackupBrain.app) Bookmarks Manager.
 
-## Installation 
-[Install for Firefox](https://backupbrain.app/firefox_updates/backup_brain_firefox_v1.0.1.xpi)
+You can find the Chrome extension in the `chrome` branch, and the Firefox extension in the `firefox` branch.
 
-or 
+The `chrome` branch is a refined manifest v3 version of the `firefox` branch. 
 
-Install for Chrome ⬅ coming soon 
-
-## Development
-
-Firefox's Support of WebExtension v3 is pretty terrible, so we can't use the same plugin for Firefox & Chrome. 
-
-As a result, the Firefox code can be found in the ~main~ branch and the Chrome code in the `manifest_v3` branch.
-
-The Chrome code is a refinement of the Firefox code.
-
-### Building
-You can build an xpi file for Firefox by running `./tools/ff_release_maker`
-
-Note that this will also update the version in the `manifest.json`
-
-## License
-This code is distributed under the MIT License. See the license file for details.
+Please note that Browser Extensions are _not_ my forté and _any_ improvements will be appreciated. Even if it's just a trivial code-cleanup PR.
