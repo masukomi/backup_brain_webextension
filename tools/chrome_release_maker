@@ -3,9 +3,9 @@
 
 version=$(cat manifest.json | grep "\"version\"" | sed -e "s/\"version\": \"//" | sed -e "s/\",//" -e "s/ //g")
 
-echo "Version number (default: $version): "
+echo "Version number (default from manifest: $version): "
 read new_version
-new_version=$(echo $version | sed -e "s/v//i")
+new_version=$(echo $new_version | sed -e "s/v//i")
 if [ "$new_version" != "" ]; then
 	version=$new_version
 fi
@@ -33,7 +33,8 @@ echo "----------------------------"
 zip -r -FS "$location$filename" ./* \
 	--exclude "*.git*" \
 	--exclude "icons/.DS_Store" \
-	--exclude "tools/*"
+	--exclude "tools/*" \
+	--exclude "screenshots/*"
 echo "----------------------------"
 echo "DONE. New file is at $location$filename"
 echo "SHA256 hash for update manifest is:"
